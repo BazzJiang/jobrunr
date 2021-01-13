@@ -9,6 +9,7 @@
     "jobParameters": [
       {
         "className": "java.nio.file.Path",
+        "actualClassName": "sun.nio.fs.UnixPath",
         "object": "${json-unit.ignore}"
       }
     ]
