@@ -8,13 +8,8 @@ object KtBackgroundJob {
   internal var jobScheduler: KtJobScheduler? = null
 
   /**
-   * Creates a new fire-and-forget job based on a given lambda.
-   * <h5>An example:</h5>
-   * <pre>`MyService service = new MyService();
-   * enqueue(() -> service.doWork());
-  `</pre> *
-   *
-   * @param job the lambda which defines the fire-and-forget job
+   * Creates a new fire-and-forget job based on a given function.
+   * @param job the function which defines the fire-and-forget job
    * @return the id of the job
    */
   fun enqueue(job: Function<*>): JobId {
@@ -23,11 +18,7 @@ object KtBackgroundJob {
   }
 
   /**
-   * Creates a new fire-and-forget job based on the given lambda and schedules it to be enqueued at the given moment of time.
-   * <h5>An example:</h5>
-   * <pre>`MyService service = new MyService();
-   * schedule(() -> service.doWork(), ZonedDateTime.now().plusHours(5));
-  `</pre> *
+   * Creates a new fire-and-forget job based on the given function and schedules it to be enqueued at the given moment of time.
    *
    * @param zonedDateTime The moment in time at which the job will be enqueued.
    * @param job           the lambda which defines the fire-and-forget job
@@ -39,11 +30,7 @@ object KtBackgroundJob {
   }
 
   /**
-   * Creates a new fire-and-forget job based on the given lambda and schedules it to be enqueued at the given moment of time.
-   * <h5>An example:</h5>
-   * <pre>`MyService service = new MyService();
-   * schedule(() -> service.doWork(), OffsetDateTime.now().plusHours(5));
-  `</pre> *
+   * Creates a new fire-and-forget job based on the given function and schedules it to be enqueued at the given moment of time.
    *
    * @param offsetDateTime The moment in time at which the job will be enqueued.
    * @param job            the lambda which defines the fire-and-forget job
@@ -55,11 +42,7 @@ object KtBackgroundJob {
   }
 
   /**
-   * Creates a new fire-and-forget job based on the given lambda and schedules it to be enqueued at the given moment of time.
-   * <h5>An example:</h5>
-   * <pre>`MyService service = new MyService();
-   * schedule(() -> service.doWork(), LocalDateTime.now().plusHours(5));
-  `</pre> *
+   * Creates a new fire-and-forget job based on the given function and schedules it to be enqueued at the given moment of time.
    *
    * @param localDateTime The moment in time at which the job will be enqueued. It will use the systemDefault ZoneId to transform it to an UTC Instant
    * @param job           the lambda which defines the fire-and-forget job
@@ -71,11 +54,7 @@ object KtBackgroundJob {
   }
 
   /**
-   * Creates a new fire-and-forget job based on the given lambda and schedules it to be enqueued at the given moment of time.
-   * <h5>An example:</h5>
-   * <pre>`MyService service = new MyService();
-   * schedule(() -> service.doWork(), Instant.now().plusHours(5));
-  `</pre> *
+   * Creates a new fire-and-forget job based on the given function and schedules it to be enqueued at the given moment of time.
    *
    * @param instant The moment in time at which the job will be enqueued.
    * @param job     the lambda which defines the fire-and-forget job
@@ -104,11 +83,7 @@ object KtBackgroundJob {
   }
 
   /**
-   * Creates a new recurring job based on the given lambda and the given cron expression. The jobs will be scheduled using the systemDefault timezone.
-   * <h5>An example:</h5>
-   * <pre>`MyService service = new MyService();
-   * scheduleRecurrently(() -> service.doWork(), Cron.daily());
-  `</pre> *
+   * Creates a new recurring job based on the given function and the given cron expression. The jobs will be scheduled using the systemDefault timezone.
    *
    * @param cron The cron expression defining when to run this recurring job
    * @param job  the lambda which defines the fire-and-forget job
@@ -121,11 +96,7 @@ object KtBackgroundJob {
   }
 
   /**
-   * Creates a new recurring job based on the given id, lambda and cron expression. The jobs will be scheduled using the systemDefault timezone
-   * <h5>An example:</h5>
-   * <pre>`MyService service = new MyService();
-   * scheduleRecurrently("my-recurring-job", () -> service.doWork(), Cron.daily());
-  `</pre> *
+   * Creates a new recurring job based on the given id, function and cron expression. The jobs will be scheduled using the systemDefault timezone
    *
    * @param id   the id of this recurring job which can be used to alter or delete it
    * @param job  the lambda which defines the fire-and-forget job
@@ -139,11 +110,7 @@ object KtBackgroundJob {
   }
 
   /**
-   * Creates a new recurring job based on the given id, lambda, cron expression and `ZoneId`.
-   * <h5>An example:</h5>
-   * <pre>`MyService service = new MyService();
-   * scheduleRecurrently("my-recurring-job", () -> service.doWork(), Cron.daily(), ZoneId.of("Europe/Brussels"));
-  `</pre> *
+   * Creates a new recurring job based on the given id, function, cron expression and `ZoneId`.
    *
    * @param id     the id of this recurring job which can be used to alter or delete it
    * @param job    the lambda which defines the fire-and-forget job
@@ -159,9 +126,6 @@ object KtBackgroundJob {
 
   /**
    * Deletes the recurring job based on the given id.
-   * <h5>An example:</h5>
-   * <pre>`delete("my-recurring-job"));
-  `</pre> *
    *
    * @param id the id of the recurring job to delete
    */

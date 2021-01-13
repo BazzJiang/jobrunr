@@ -13,6 +13,7 @@ import org.jobrunr.jobs.states.StateName
 import org.jobrunr.scheduling.cron.Cron
 import org.jobrunr.server.BackgroundJobServer
 import org.jobrunr.server.BackgroundJobServerConfiguration
+import org.jobrunr.server.JobActivator
 import org.jobrunr.storage.InMemoryStorageProvider
 import org.jobrunr.storage.PageRequest
 import org.jobrunr.utils.mapper.jackson.JacksonJsonMapper
@@ -20,6 +21,7 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mock
+import java.lang.IllegalArgumentException
 import java.util.concurrent.TimeUnit
 
 class KtJobSchedulerTest {
@@ -45,7 +47,9 @@ class KtJobSchedulerTest {
   private val jobScheduler = KtJobScheduler(storageProvider, jobFilterUtils)
   private val backgroundJobServer = BackgroundJobServer(
     storageProvider,
-    null,
+          object : JobActivator {
+            override fun <T : Any> activateJob(type: Class<T>): T? = get(type)
+          },
     BackgroundJobServerConfiguration.usingStandardBackgroundJobServerConfiguration()
       .andPollIntervalInSeconds(5)
   )
@@ -57,6 +61,15 @@ class KtJobSchedulerTest {
       .useBackgroundJobServer(backgroundJobServer)
       .initialize()
     backgroundJobServer.start()
+  }
+
+  private fun <T> get(type: Class<T>): T? {
+    if (type.name == "TestService") {
+      return TestService() as T
+    } else if (type.name == "org.jobrunr.scheduling.KtJobSchedulerTest\$test enqueue lambda with service dependency\$jobId\$1") {
+      throw IllegalArgumentException("Should be TestService, no?");
+    }
+    return null
   }
 
   @Test
@@ -72,6 +85,22 @@ class KtJobSchedulerTest {
       StateName.ENQUEUED,
       StateName.PROCESSING,
       StateName.SUCCEEDED
+    )
+  }
+
+  @Test
+  fun `test enqueue lambda with service dependency`() {
+    val testService = TestService()
+    val input = "Hello!"
+    val jobId = jobScheduler.enqueue { testService.doWork(input) }
+    await().atMost(Durations.FIVE_SECONDS).until {
+      storageProvider.getJobById(jobId).state == StateName.SUCCEEDED
+    }
+    val job = storageProvider.getJobById(jobId)
+    assertThat(job.jobStates.map { it.name }).containsExactly(
+            StateName.ENQUEUED,
+            StateName.PROCESSING,
+            StateName.SUCCEEDED
     )
   }
 
